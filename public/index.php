@@ -12,7 +12,10 @@ $container = new Container();
 
 // Set view in Container
 $container->set(Twig::class, function () {
-    return Twig::create(__DIR__ . '/../templates', ['cache' => __DIR__ . '/../cache']);
+    return Twig::create(
+        __DIR__ . '/../templates',
+        ['cache' => false ] //__DIR__ . '/../cache']
+    );
 });
 
 // Create App from container
