@@ -29,8 +29,8 @@ $app->addRoutingMiddleware();
 $app->addErrorMiddleware(true, true, true);
 
 // Render from template file templates/profile.html.twig
-$app->get('/', function ($request, $response) {
-    $twig = $this->get(Twig::class);
+$app->get('/', function ($request, $response) use ($container) {
+    $twig = $container->get(Twig::class);
     return $twig->render($response, 'index.html.twig');
 })->setName('index');
 
