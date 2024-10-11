@@ -1,25 +1,11 @@
 <?php
 
-use DI\Container;
-use Slim\Factory\AppFactory;
 use Slim\Views\Twig;
-use Slim\Views\TwigMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$container = new Container();
-
-$container->set(Twig::class, function () {
-    return Twig::create(
-        __DIR__ . '/../templates',
-        ['cache' => false ] //__DIR__ . '/../cache']
-    );
-});
-
-$app = AppFactory::createFromContainer($container);
-$app->add(TwigMiddleware::create($app, $container->get(Twig::class)));
-$app->addRoutingMiddleware();
-$app->addErrorMiddleware(true, true, true);
+$app = require __DIR__ . '/../app/bootstrap.php';
+$container = $app->getContainer();
 
 $app->get('/', function ($request, $response) use ($container) {
     $twig = $container->get(Twig::class);
