@@ -9,11 +9,11 @@ install-dev:
 	composer install
 
 lint:
-	composer exec --verbose phpcs -- --standard=PSR12 public tests
+	composer exec --verbose phpcs -- --standard=PSR12 public tests app src
 	composer exec --verbose phpstan
 
 lint-fix:
-	composer exec --verbose phpcbf -- --standard=PSR12 public tests
+	composer exec --verbose phpcbf -- --standard=PSR12 public tests app src
 
 validate:
 	composer validate

@@ -1,10 +1,12 @@
 <?php
 
-return [
-    'debug' => DI\env('APP_DEBUG', false),
-    'displayErrorDetails' => DI\env('APP_DEBUG', false),
+$isDebug = strtolower($_ENV['APP_DEBUG'] ?? '') === 'true';
 
-    'logErrors' => DI\env('LOG_ERRORS', true),
-    'logErrorDetails' => DI\env('LOG_ERRORS_DETAILS', true),
-    'logToOutput' => DI\env('LOG_TO_OUTPUT', false),
+return [
+    'debug' => $isDebug,
+    'displayErrorDetails' => $isDebug,
+    'logErrors' => $isDebug,
+    'logErrorDetails' => strtolower($_ENV['LOG_ERRORS_DETAILS '] ?? '') === 'true',
+    'logToOutput' => strtolower($_ENV['LOG_TO_OUTPUT'] ?? '') === 'true',
+    'cache' => $isDebug ? false : __DIR__ . '/../.cache',
 ];

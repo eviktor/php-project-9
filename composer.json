@@ -20,12 +20,12 @@
     ],
     "autoload": {
         "files": [
-            "app/helpers.php"
         ]
     },
     "autoload-dev": {
         "psr-4": {
-          "Php\\Package\\Tests\\": "tests"
+            "PageAnalyzer\\Tests\\": "tests",
+            "PageAnalyzer\\": "src"
         }
     }
 }

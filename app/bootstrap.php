@@ -2,6 +2,8 @@
 
 use DI\Container;
 use Dotenv\Dotenv;
+use PageAnalyzer\Settings\Settings;
+use PageAnalyzer\Settings\SettingsInterface;
 use Slim\Factory\AppFactory;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
@@ -13,10 +15,19 @@ if (file_exists(__DIR__ . '/../.env')) {
 
 $container = new Container();
 
-$container->set(Twig::class, function () {
+$settingsData = require __DIR__ . '/../app/settings.php';
+$container->set(SettingsInterface::class, function () use ($settingsData) {
+    return new Settings($settingsData);
+});
+$settings = $container->get(SettingsInterface::class);
+
+$container->set(Twig::class, function () use ($settings) {
     return Twig::create(
         __DIR__ . '/../templates',
-        require __DIR__ . '/../app/settings.php'
+        [
+            'debug' => $settings->get('debug'),
+            'cache' => $settings->get('cache'),
+        ]
     );
 });
 
@@ -26,6 +37,10 @@ $app = AppFactory::create();
 
 $app->add(TwigMiddleware::create($app, $container->get(Twig::class)));
 $app->addRoutingMiddleware();
-$app->addErrorMiddleware(true, true, true);
+$app->addErrorMiddleware(
+    $settings->get('displayErrorDetails'),
+    $settings->get('logErrors'),
+    $settings->get('logErrorDetails')
+);
 
 return $app;
