@@ -17,6 +17,6 @@ class HomeController
 
     public function index(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        return $this->view->render($response, 'index.html.twig');
+        return $this->view->render($response, 'home/index.html.twig');
     }
 }

@@ -17,6 +17,6 @@ class UrlsController
 
     public function index(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        return $this->view->render($response, 'urls.html.twig');
+        return $this->view->render($response, 'urls/index.html.twig');
     }
 }
