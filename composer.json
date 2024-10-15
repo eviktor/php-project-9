@@ -21,12 +21,10 @@
     ],
     "autoload": {
         "files": [
-        ]
-    },
-    "autoload-dev": {
+        ],
         "psr-4": {
-            "PageAnalyzer\\Tests\\": "tests",
-            "PageAnalyzer\\": "src"
+            "App\\Tests\\": "tests",
+            "App\\": "app"
         }
     }
 }

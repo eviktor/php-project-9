@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PageAnalyzer\Settings;
+namespace App\Settings;
 
 interface SettingsInterface
 {
