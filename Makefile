@@ -1,4 +1,6 @@
 PORT ?= 8000
+DATABASE_URL ?= `sed -n '/^DATABASE_URL/s/.*=//p' .env`
+
 start:
 	PHP_CLI_SERVER_WORKERS=5 php -S 0.0.0.0:$(PORT) -t public
 
@@ -28,4 +30,4 @@ test-coverage-text:
 	XDEBUG_MODE=coverage composer exec --verbose phpunit tests -- --coverage-text
 
 db-prepare:
-	psql -a -d `sed -n '/^DATABASE_URL/s/.*=//p' .env` -f database.sql
+	psql -a -d $(DATABASE_URL) -f database.sql
