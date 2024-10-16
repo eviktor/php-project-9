@@ -28,4 +28,4 @@ test-coverage-text:
 	XDEBUG_MODE=coverage composer exec --verbose phpunit tests -- --coverage-text
 
 db-prepare:
-	export $(grep '^DATABASE_URL' .env | tr -d '[:blank:]') && psql -a -d $(DATABASE_URL) -f database.sql
+	psql -a -d `sed -n '/^DATABASE_URL/s/.*=//p' .env` -f database.sql
