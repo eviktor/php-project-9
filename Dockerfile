@@ -13,5 +13,4 @@ COPY . .
 
 RUN composer install
 
-CMD ["bash", "-c", "make db-prepare"]
-CMD ["bash", "-c", "make start"]
+CMD ["bash", "-c", "make db-prepare; make start"]
