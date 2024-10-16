@@ -3,5 +3,10 @@
 {% set page = 'urls' %}
 
 {% block content %}
-urls
+<h1>Urls</h1>
+<ul>
+    {% for url in urls %}
+        <li>{{ url.id }} {{ url.name }} {{ url.created_at }}</li>
+    {% endfor %}
+</ul>
 {% endblock %}

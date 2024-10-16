@@ -7,4 +7,6 @@ $app->get('/', HomeController::class . ':index')
     ->setName('home');
 
 $app->get('/urls', UrlsController::class . ':index')
-    ->setName('urls');
+    ->setName('urls.index');
+$app->post('/urls', UrlsController::class . ':create')
+    ->setName('urls.create');
