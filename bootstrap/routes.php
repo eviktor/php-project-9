@@ -3,7 +3,7 @@
 use App\Controllers\HomeController;
 use App\Controllers\UrlsController;
 
-$app->get('/', HomeController::class . ':index')
+$app->get('/', HomeController::class . ':home')
     ->setName('home');
 
 $app->get('/urls', UrlsController::class . ':index')

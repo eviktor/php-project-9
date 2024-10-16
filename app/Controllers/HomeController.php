@@ -6,17 +6,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Views\Twig;
 
-class HomeController
+class HomeController extends Controller
 {
-    private $view;
-
-    public function __construct(Twig $view)
+    public function home(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $this->view = $view;
-    }
-
-    public function index(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
-        return $this->view->render($response, 'home/index.html.twig');
+        return $this->container->get(Twig::class)->render($response, 'home.html.twig');
     }
 }

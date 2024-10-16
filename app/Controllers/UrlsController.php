@@ -2,21 +2,12 @@
 
 namespace App\Controllers;
 
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Routing\RouteContext;
 use Slim\Views\Twig;
 
-class UrlsController
+class UrlsController extends Controller
 {
-    private $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
     public function index(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $db = $this->container->get(\PDO::class);
@@ -36,8 +27,7 @@ class UrlsController
         $stmt->execute(['name' => $params['url']['name']]);
         // $id = $db->lastInsertId();
 
-        $routeParser = RouteContext::fromRequest($request)->getRouteParser();
-        $redirectUrl = $routeParser->urlFor('urls.index');
+        $redirectUrl = $this->getRouteParser($request)->urlFor('urls.index');
         return $response
              ->withHeader('Location', $redirectUrl)
              ->withStatus(302);
