@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Database\Connection;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,7 +19,7 @@ class UrlsController
 
     public function index(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $db = $this->container->get(Connection::class)->connect();
+        $db = $this->container->get(\PDO::class);
         $sql = 'SELECT id, name, created_at FROM urls';
         $urls = $db->query($sql)->fetchAll();
 
@@ -31,7 +30,7 @@ class UrlsController
     {
         $params = $request->getParsedBody();
 
-        $db = $this->container->get(Connection::class)->connect();
+        $db = $this->container->get(\PDO::class);
         $sql = 'INSERT INTO urls (name) VALUES (:name)';
         $stmt = $db->prepare($sql);
         $stmt->execute(['name' => $params['url']['name']]);

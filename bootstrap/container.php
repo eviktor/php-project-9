@@ -28,4 +28,7 @@ $container->set(Twig::class, function (SettingsInterface $settings) {
     );
 });
 
+$getPDO = require __DIR__ . '/../bootstrap/database.php';
+$container->set(\PDO::class, $getPDO);
+
 return $container;
