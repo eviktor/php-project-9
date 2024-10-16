@@ -18,8 +18,8 @@ return function (): SettingsInterface {
             'driver' => $databaseUrl['scheme'] ?? 'postgresql',
             'user' => $databaseUrl['user'],
             'password' => $databaseUrl['pass'],
-            'host' => $databaseUrl['host'] ?? 'localhost',
-            'port' => $databaseUrl['port'] ?? 5432,
+            'host' => $databaseUrl['host'],
+            'port' => $databaseUrl['port'],
             'name' => ltrim($databaseUrl['path'], '/'),
         ]
     ];
