@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\UrlNameNormalizer;
 use Carbon\Carbon;
 
 class Url
@@ -43,7 +44,7 @@ class Url
 
     public function setName(string $name): void
     {
-        $this->name = $name;
+        $this->name = self::normalizeName($name);
     }
 
     public function setCreatedAt(?Carbon $createdAt): void
@@ -54,5 +55,10 @@ class Url
     public function exists(): bool
     {
         return !is_null($this->getId());
+    }
+
+    public static function normalizeName(string $name): string
+    {
+        return UrlNameNormalizer::normalize($name);
     }
 }

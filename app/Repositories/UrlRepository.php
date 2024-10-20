@@ -78,7 +78,8 @@ class UrlRepository extends Repository
     {
         $sql = "SELECT * FROM urls WHERE name = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$name]);
+        $normalizedName = Url::normalizeName($name);
+        $stmt->execute([$normalizedName]);
         if ($row = $stmt->fetch()) {
             $url = Url::fromArray([
                 'name' => $row['name'],

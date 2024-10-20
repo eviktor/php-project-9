@@ -2,6 +2,7 @@
 
 namespace App\Validators;
 
+use App\Helpers\UrlNameNormalizer;
 use App\Repositories\UrlRepository;
 use Valitron\Validator;
 
@@ -13,6 +14,8 @@ class UrlValidator
 
     public function validate(array $urlData): array
     {
+        $urlData['url']['name'] = UrlNameNormalizer::normalize($urlData['url']['name']);
+
         $validator = new Validator($urlData);
 
         $validator->mapFieldRules('url.name', [
