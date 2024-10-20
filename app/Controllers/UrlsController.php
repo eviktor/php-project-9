@@ -12,6 +12,8 @@ class UrlsController extends Controller
 {
     public function index(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        $this->logger->info("Urls.index visited");
+
         $urlRepository = $this->container->get(UrlRepository::class);
         $urls = $urlRepository->getEntities();
 
@@ -20,6 +22,8 @@ class UrlsController extends Controller
 
     public function create(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        $this->logger->info("Urls.create visited");
+
         $params = $request->getParsedBody();
 
         $urlRepository = $this->container->get(UrlRepository::class);

@@ -2,6 +2,10 @@
 
 use DI\Container;
 use Dotenv\Dotenv;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Processor\UidProcessor;
+use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
 use App\Settings\SettingsInterface;
 
@@ -14,6 +18,19 @@ $container = new Container();
 
 $getSettings = require __DIR__ . '/../bootstrap/settings.php';
 $container->set(SettingsInterface::class, $getSettings);
+
+$container->set(LoggerInterface::class, function (SettingsInterface $settings) {
+    $loggerSettings = $settings->get('logger');
+    $logger = new Logger($loggerSettings['name']);
+
+    $processor = new UidProcessor();
+    $logger->pushProcessor($processor);
+
+    $handler = new StreamHandler($loggerSettings['path'], $loggerSettings['level']);
+    $logger->pushHandler($handler);
+
+    return $logger;
+});
 
 $container->set(Twig::class, function (SettingsInterface $settings) {
     return Twig::create(
