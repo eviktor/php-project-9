@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\Url;
 use App\Repositories\UrlRepository;
+use App\Validators\UrlValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Views\Twig;
@@ -27,12 +28,23 @@ class UrlsController extends Controller
         $params = $request->getParsedBody();
 
         $urlRepository = $this->container->get(UrlRepository::class);
-        $url = Url::fromArray($params['url']);
-        $urlRepository->save($url);
+        $validator = $this->container->get(UrlValidator::class);
+        $errors = $validator->validate($params);
 
-        $redirectUrl = $this->getRouteParser($request)->urlFor('urls.index');
+        if (count($errors) === 0) {
+            $url = Url::fromArray($params['url']);
+            $urlRepository->save($url);
+
+            $redirectUrl = $this->getRouteParser($request)->urlFor('urls.index');
+            return $response
+                ->withHeader('Location', $redirectUrl)
+                ->withStatus(302);
+        }
+
+        $redirectUrl = $this->getRouteParser($request)->urlFor('home');
         return $response
-             ->withHeader('Location', $redirectUrl)
-             ->withStatus(302);
+            ->withHeader('Location', $redirectUrl)
+            //->withStatus(422);
+            ->withStatus(302);
     }
 }

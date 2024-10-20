@@ -30,7 +30,10 @@ class UrlRepository extends Repository
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$id]);
         if ($row = $stmt->fetch()) {
-            $url = Url::fromArray([$row['name'], $row['created_at']]);
+            $url = Url::fromArray([
+                'name' => $row['name'],
+                'created_at' => $row['created_at']
+            ]);
             $url->setId($row['id']);
             return $url;
         }
@@ -69,5 +72,22 @@ class UrlRepository extends Repository
         $stmt->execute();
         $id = (int) $this->conn->lastInsertId();
         $url->setId($id);
+    }
+
+    public function findByName(string $name): ?Url
+    {
+        $sql = "SELECT * FROM urls WHERE name = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$name]);
+        if ($row = $stmt->fetch()) {
+            $url = Url::fromArray([
+                'name' => $row['name'],
+                'created_at' => $row['created_at']
+            ]);
+            $url->setId($row['id']);
+            return $url;
+        }
+
+        return null;
     }
 }
