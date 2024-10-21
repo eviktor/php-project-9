@@ -33,7 +33,7 @@ return function (ContainerInterface $container): \PDO {
 
     $pdo = new \PDO($pdoDsn);
 
-    if ($settings->get('APP_ENV') === 'local' || $settings->get('APP_ENV') === 'testing') {
+    if ($settings->get('env') === 'local' || $settings->get('env') === 'testing') {
         $initFilePath = __DIR__ . "/../database.$driver.sql";
         $initSql = file_get_contents($initFilePath);
         $pdo->exec($initSql);
