@@ -8,7 +8,7 @@ return function (): SettingsInterface {
     $isDebug = strtolower($_ENV['APP_DEBUG'] ?? '') === 'true';
 
     $settingsData = [
-        'env' => strtolower($_ENV['APP_ENV']),
+        'env' => strtolower($_ENV['APP_ENV'] ?? 'production'),
         'debug' => $isDebug,
 
         'displayErrorDetails' => strtolower($_ENV['LOG_ERRORS_DETAILS'] ?? '') === 'true',
