@@ -16,9 +16,13 @@ class UrlsController extends Controller
         $this->logger->info("Urls.index visited");
 
         $urlRepository = $this->container->get(UrlRepository::class);
-        $urls = $urlRepository->getEntities();
 
-        return $this->container->get(Twig::class)->render($response, 'urls/index.html.twig', compact('urls'));
+        $params = [
+            'urls' => $urlRepository->getEntities(),
+            'flash' => $this->flash->getMessages()
+        ];
+
+        return $this->container->get(Twig::class)->render($response, 'urls/index.html.twig', $params);
     }
 
     public function create(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
@@ -35,16 +39,17 @@ class UrlsController extends Controller
             $url = Url::fromArray($params['url']);
             $urlRepository->save($url);
 
+            $this->flash->addMessage('success', 'Страница успешно добавлена');
             $redirectUrl = $this->getRouteParser($request)->urlFor('urls.index');
             return $response
                 ->withHeader('Location', $redirectUrl)
                 ->withStatus(302);
         }
 
-        $redirectUrl = $this->getRouteParser($request)->urlFor('home');
+        $this->flash->addMessage('warning', 'Страница уже существует');
+        $redirectUrl = $this->getRouteParser($request)->urlFor('urls.index');
         return $response
             ->withHeader('Location', $redirectUrl)
-            //->withStatus(422);
             ->withStatus(302);
     }
 }

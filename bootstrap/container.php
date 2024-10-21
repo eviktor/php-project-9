@@ -6,6 +6,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Processor\UidProcessor;
 use Psr\Log\LoggerInterface;
+use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use App\Settings\SettingsInterface;
 
@@ -40,6 +41,11 @@ $container->set(Twig::class, function (SettingsInterface $settings) {
             'cache' => $settings->get('cache'),
         ]
     );
+});
+
+$container->set(Messages::class, function () {
+    $storage = [];
+    return new Messages($storage);
 });
 
 $getPDO = require __DIR__ . '/../bootstrap/database.php';
