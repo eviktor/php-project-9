@@ -29,7 +29,7 @@ class UrlsController extends Controller
     {
         $this->logger->info("Urls.create visited");
 
-        $params = $request->getParsedBody();
+        $params = (array)$request->getParsedBody();
 
         $urlRepository = $this->container->get(UrlRepository::class);
         $validator = $this->container->get(UrlValidator::class);

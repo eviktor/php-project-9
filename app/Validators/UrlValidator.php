@@ -31,6 +31,6 @@ class UrlValidator
 
         $validator->validate();
 
-        return $validator->errors();
+        return (array)$validator->errors();
     }
 }

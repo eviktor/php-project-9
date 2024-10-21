@@ -12,6 +12,10 @@ class UrlRepository extends Repository
         $sql = "SELECT * FROM urls";
         $stmt = $this->conn->query($sql);
 
+        if ($stmt === false) {
+            throw new \Exception('Query failed: ' . implode(', ', $this->conn->errorInfo()));
+        }
+
         while ($row = $stmt->fetch()) {
             $url = Url::fromArray($row);
             $url->setId($row['id']);
