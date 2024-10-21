@@ -13,10 +13,7 @@ class UrlRepository extends Repository
         $stmt = $this->conn->query($sql);
 
         while ($row = $stmt->fetch()) {
-            $url = Url::fromArray([
-                'name' => $row['name'],
-                'created_at' => $row['created_at']
-            ]);
+            $url = Url::fromArray($row);
             $url->setId($row['id']);
             $urls[] = $url;
         }
@@ -30,10 +27,7 @@ class UrlRepository extends Repository
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$id]);
         if ($row = $stmt->fetch()) {
-            $url = Url::fromArray([
-                'name' => $row['name'],
-                'created_at' => $row['created_at']
-            ]);
+            $url = Url::fromArray($row);
             $url->setId($row['id']);
             return $url;
         }
@@ -81,10 +75,7 @@ class UrlRepository extends Repository
         $normalizedName = Url::normalizeName($name);
         $stmt->execute([$normalizedName]);
         if ($row = $stmt->fetch()) {
-            $url = Url::fromArray([
-                'name' => $row['name'],
-                'created_at' => $row['created_at']
-            ]);
+            $url = Url::fromArray($row);
             $url->setId($row['id']);
             return $url;
         }
