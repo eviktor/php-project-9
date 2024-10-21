@@ -3,6 +3,7 @@
   <source>
     <include>
       <directory suffix=".php">./public</directory>
-    </include>
+      <directory suffix=".php">./app</directory>
+</include>
   </source>
 </phpunit>
