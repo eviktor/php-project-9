@@ -3,3 +3,6 @@ parameters:
     paths:
         - public
         - tests
+    ignoreErrors:
+        - identifier: missingType.generics
+        - identifier: missingType.iterableValue
