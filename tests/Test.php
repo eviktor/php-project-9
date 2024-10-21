@@ -4,7 +4,7 @@ namespace App\Tests;
 
 class Test extends TestCase
 {
-    public function testAnalyzer(): void
+    public function testHome(): void
     {
         $app = $this->getAppInstance();
 

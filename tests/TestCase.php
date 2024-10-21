@@ -26,7 +26,6 @@ class TestCase extends PHPUnit_TestCase
     protected function getAppInstance(): App
     {
         $app = require __DIR__ . '/../bootstrap/app.php';
-
         return $app;
     }
 

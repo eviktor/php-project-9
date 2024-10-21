@@ -10,11 +10,9 @@ use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use App\Settings\SettingsInterface;
 
-$isTesting = (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'testing');
-$envDir = __DIR__ . '/../' . ($isTesting ? 'tests/' : '');
-$envFile = $isTesting ? '.env.testing' : '.env';
-if (file_exists("$envDir$envFile")) {
-    Dotenv::createImmutable($envDir, $envFile)->load();
+if (file_exists(__DIR__ . '/../.env')) {
+    Dotenv::createImmutable(__DIR__ . '/../')
+        ->load();
 }
 
 $container = new Container();
