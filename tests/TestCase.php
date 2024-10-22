@@ -7,6 +7,7 @@ namespace App\Tests;
 use Exception;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Psr7\Factory\StreamFactory;
@@ -19,14 +20,18 @@ class TestCase extends PHPUnit_TestCase
 {
     use ProphecyTrait;
 
+    protected ?App $app = null;
+
     /**
      * @return App
      * @throws Exception
      */
     protected function getAppInstance(): App
     {
-        $app = require __DIR__ . '/../bootstrap/app.php';
-        return $app;
+        if (is_null($this->app)) {
+            $this->app = require __DIR__ . '/../bootstrap/app.php';
+        }
+        return $this->app;
     }
 
     /**
@@ -57,5 +62,28 @@ class TestCase extends PHPUnit_TestCase
         }
 
         return new SlimRequest($method, $uri, $h, $cookies, $serverParams, $stream);
+    }
+
+    protected function get(string $path): ResponseInterface
+    {
+        $app = $this->getAppInstance();
+        $req = $this->createRequest('GET', $path);
+        return $app->handle($req);
+    }
+
+    protected function getResponseHtml(ResponseInterface $response): string
+    {
+        $body = $response->getBody();
+        $body->rewind();
+        return $body->getContents();
+    }
+
+    protected function post(string $path, array $params): ResponseInterface
+    {
+        $app = $this->getAppInstance();
+        $req = $this
+            ->createRequest('POST', $path)
+            ->withParsedBody($params);
+        return $app->handle($req);
     }
 }
