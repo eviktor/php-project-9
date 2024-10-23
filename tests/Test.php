@@ -4,19 +4,31 @@ namespace App\Tests;
 
 class Test extends TestCase
 {
-    protected function initDb(): \PDO
+    public static function setUpBeforeClass(): void
     {
-        $app = $this->getAppInstance();
+        $app = self::getAppInstance();
         $pdo = $app->getContainer()?->get(\PDO::class);
-        $initFilePath = __DIR__ . "/init.sql";
-        $initSql = file_get_contents($initFilePath);
+        $initSql = <<<SQL
+            INSERT INTO urls('name') VALUES
+                ('http://example.com'),
+                ('https://google.com')
+            ;
+        SQL;
         $pdo->exec($initSql);
-        return $pdo;
     }
 
     protected function setUp(): void
     {
-        $this->initDb();
+        $app = self::getAppInstance();
+        $pdo = $app->getContainer()?->get(\PDO::class);
+        $pdo->beginTransaction();
+    }
+
+    protected function tearDown(): void
+    {
+        $app = self::getAppInstance();
+        $pdo = $app->getContainer()?->get(\PDO::class);
+        $pdo->rollBack();
     }
 
     public function testHome(): void
@@ -30,7 +42,9 @@ class Test extends TestCase
         $params = ['url' => ['name' => 'http://test.com']];
         $response = $this->post('/urls', $params);
         $this->assertSame(302, $response->getStatusCode());
-        $this->assertSame('/urls', $response->getHeader('Location')[0]);
+        $redirectUrl = $response->getHeader('Location')[0];
+        $this->assertStringMatchesFormat('/urls', $redirectUrl);
+        // $this->assertStringMatchesFormat('/urls/%d', $redirectUrl);
 
         $response = $this->get('/urls');
         $this->assertSame(200, $response->getStatusCode());
@@ -40,12 +54,57 @@ class Test extends TestCase
 
         $response = $this->post('/urls', $params);
         $this->assertSame(302, $response->getStatusCode());
-        $this->assertSame('/urls', $response->getHeader('Location')[0]);
+        $newRedirectUrl = $response->getHeader('Location')[0];
+        $this->assertStringMatchesFormat('/urls', $newRedirectUrl);
+        // $this->assertStringMatchesFormat('/urls/%d', $newRedirectUrl);
+        $this->assertSame($redirectUrl, $newRedirectUrl);
 
         $response = $this->get('/urls');
         $this->assertSame(200, $response->getStatusCode());
         $html = $this->getResponseHtml($response);
         $this->assertStringContainsString('Страница уже существует', $html);
         $this->assertStringContainsString('http://test.com', $html);
+    }
+
+    public static function provideValidationData(): array
+    {
+        return [
+            [ 'http://test.com', 302,'' ],
+            [ '-', 302, 'Некорректный URL' ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideValidationData
+     */
+    public function testUrlValidation(string $url, int $expectedCode, string $expectedText): void
+    {
+        $this->markTestIncomplete('The test is not ready');
+
+        $params = ['url' => ['name' => $url]];
+        $response = $this->post('/urls', $params);
+        $this->assertSame($expectedCode, $response->getStatusCode());
+        $html = $this->getResponseHtml($response);
+        $this->assertStringContainsString($expectedText, $html);
+    }
+
+    public function testUrlView(): void
+    {
+        $this->markTestIncomplete('The test is not ready');
+
+        $response = $this->get('/urls/1');
+        $this->assertSame(200, $response->getStatusCode());
+        $html = $this->getResponseHtml($response);
+        $this->assertStringContainsString('Анализатор страниц', $html);
+    }
+
+    public function testUrlIndex(): void
+    {
+        $this->markTestIncomplete('The test is not ready');
+
+        $response = $this->get('/urls');
+        $this->assertSame(200, $response->getStatusCode());
+        $html = $this->getResponseHtml($response);
+        $this->assertStringContainsString('Анализатор страниц', $html);
     }
 }

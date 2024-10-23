@@ -20,18 +20,18 @@ class TestCase extends PHPUnit_TestCase
 {
     use ProphecyTrait;
 
-    protected ?App $app = null;
+    protected static ?App $app = null;
 
     /**
      * @return App
      * @throws Exception
      */
-    protected function getAppInstance(): App
+    protected static function getAppInstance(): App
     {
-        if (is_null($this->app)) {
-            $this->app = require __DIR__ . '/../bootstrap/app.php';
+        if (is_null(self::$app)) {
+            self::$app = require __DIR__ . '/../bootstrap/app.php';
         }
-        return $this->app;
+        return self::$app;
     }
 
     /**
@@ -66,7 +66,7 @@ class TestCase extends PHPUnit_TestCase
 
     protected function get(string $path): ResponseInterface
     {
-        $app = $this->getAppInstance();
+        $app = self::getAppInstance();
         $req = $this->createRequest('GET', $path);
         return $app->handle($req);
     }
@@ -80,7 +80,7 @@ class TestCase extends PHPUnit_TestCase
 
     protected function post(string $path, array $params): ResponseInterface
     {
-        $app = $this->getAppInstance();
+        $app = self::getAppInstance();
         $req = $this
             ->createRequest('POST', $path)
             ->withParsedBody($params);
