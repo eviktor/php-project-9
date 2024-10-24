@@ -13,14 +13,6 @@ class UrlValidator
     {
     }
 
-    public function validateDuplicate(array $urlData): array
-    {
-        $urlData['url']['name'] = UrlNameNormalizer::normalize($urlData['url']['name']);
-
-        $url = $this->urlRepository->findByName($urlData['url']['name']);
-        return $url === null ? [] : ['url.name' => 'Url with this name already exists.'];
-    }
-
     public function validate(array $urlData): array
     {
         $urlName = $urlData['url']['name'];

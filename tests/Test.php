@@ -45,8 +45,7 @@ class Test extends TestCase
         $response = $this->post('/urls', $params);
         $this->assertSame(302, $response->getStatusCode());
         $redirectUrl = $response->getHeader('Location')[0];
-        $this->assertStringMatchesFormat('/urls', $redirectUrl);
-        // $this->assertStringMatchesFormat('/urls/%d', $redirectUrl);
+        $this->assertStringMatchesFormat('/urls/%d', $redirectUrl);
 
         $response = $this->get('/urls');
         $this->assertSame(200, $response->getStatusCode());
@@ -57,8 +56,7 @@ class Test extends TestCase
         $response = $this->post('/urls', $params);
         $this->assertSame(302, $response->getStatusCode());
         $newRedirectUrl = $response->getHeader('Location')[0];
-        $this->assertStringMatchesFormat('/urls', $newRedirectUrl);
-        // $this->assertStringMatchesFormat('/urls/%d', $newRedirectUrl);
+        $this->assertStringMatchesFormat('/urls/%d', $newRedirectUrl);
         $this->assertSame($redirectUrl, $newRedirectUrl);
 
         $response = $this->get('/urls');
@@ -92,19 +90,19 @@ class Test extends TestCase
     {
         $this->markTestIncomplete('The test is not ready');
 
-        $response = $this->get('/urls/1');
-        $this->assertSame(200, $response->getStatusCode());
-        $html = $this->getResponseHtml($response);
-        $this->assertStringContainsString('Анализатор страниц', $html);
+        // $response = $this->get('/urls/1');
+        // $this->assertSame(200, $response->getStatusCode());
+        // $html = $this->getResponseHtml($response);
+        // $this->assertStringContainsString('Анализатор страниц', $html);
     }
 
     public function testUrlIndex(): void
     {
         $this->markTestIncomplete('The test is not ready');
 
-        $response = $this->get('/urls');
-        $this->assertSame(200, $response->getStatusCode());
-        $html = $this->getResponseHtml($response);
-        $this->assertStringContainsString('Анализатор страниц', $html);
+        // $response = $this->get('/urls');
+        // $this->assertSame(200, $response->getStatusCode());
+        // $html = $this->getResponseHtml($response);
+        // $this->assertStringContainsString('Анализатор страниц', $html);
     }
 }

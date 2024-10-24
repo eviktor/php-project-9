@@ -6,6 +6,7 @@ use App\Models\Url;
 use App\Repositories\UrlRepository;
 use App\Validators\UrlValidator;
 use Psr\Http\Message\ResponseInterface;
+use Slim\Http\Interfaces\ResponseInterface as SlimResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Views\Twig;
 
@@ -46,23 +47,47 @@ class UrlsController extends Controller
                 ->render($response->withStatus(422), 'home.html.twig', $homeParams);
         }
 
-        $dupErros = $validator->validateDuplicate($params);
-
-        if (count($dupErros) > 0) {
+        $id = $urlRepository->findByName($params['url']['name'])?->getId();
+        if ($id !== null) {
             $this->flash->addMessage('warning', 'Страница уже существует');
-            $redirectUrl = $this->getRouteParser($request)->urlFor('urls.index');
-            return $response
-                ->withHeader('Location', $redirectUrl)
-                ->withStatus(302);
+        } else {
+            $url = Url::fromArray($params['url']);
+            $urlRepository->save($url);
+            $id = $url->getId();
+            $this->flash->addMessage('success', 'Страница успешно добавлена');
         }
 
-        $url = Url::fromArray($params['url']);
-        $urlRepository->save($url);
+        $params = [
+            'id' => $id,
+        ];
 
-        $this->flash->addMessage('success', 'Страница успешно добавлена');
-        $redirectUrl = $this->getRouteParser($request)->urlFor('urls.index');
+        $redirectUrl = $this->getRouteParser($request)
+            ->urlFor('urls.show', $params);
         return $response
             ->withHeader('Location', $redirectUrl)
             ->withStatus(302);
+    }
+
+    public function show(
+        ServerRequestInterface $request,
+        SlimResponseInterface $response,
+        array $args
+    ): ResponseInterface {
+        $this->logger->info("Urls.show visited");
+
+        $urlRepository = $this->container->get(UrlRepository::class);
+        $url = $urlRepository->find((int)$args['id']);
+        if ($url === null) {
+            return $response
+                ->withStatus(404)
+                ->withHeader('Content-Type', 'text/html')
+                ->write('Page not found');
+        }
+
+        $params = [
+            'url' => $url,
+            'flash' => $this->flash->getMessages()
+        ];
+        return $this->container->get(Twig::class)->render($response, 'urls/show.html.twig', $params);
     }
 }

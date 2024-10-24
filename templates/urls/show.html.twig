@@ -1,0 +1,8 @@
+{% extends "layout.html.twig" %}
+
+{% set page = 'urls' %}
+
+{% block content %}
+    <h1>Url</h1>
+    {{ url.id }} {{ url.name }} {{ url.created_at }}
+{% endblock %}
