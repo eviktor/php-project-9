@@ -9,10 +9,6 @@ use Valitron\Validator;
 
 class UrlValidator
 {
-    public function __construct(protected UrlRepository $urlRepository)
-    {
-    }
-
     public function validate(array $urlData): array
     {
         $urlName = $urlData['url']['name'];
