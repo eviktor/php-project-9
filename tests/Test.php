@@ -88,21 +88,21 @@ class Test extends TestCase
 
     public function testUrlView(): void
     {
-        $this->markTestIncomplete('The test is not ready');
+        $response = $this->get('/urls/1');
+        $this->assertSame(200, $response->getStatusCode());
+        $html = $this->getResponseHtml($response);
+        $this->assertStringContainsString('example.com', $html);
 
-        // $response = $this->get('/urls/1');
-        // $this->assertSame(200, $response->getStatusCode());
-        // $html = $this->getResponseHtml($response);
-        // $this->assertStringContainsString('Анализатор страниц', $html);
+        $response = $this->get('/urls/100');
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     public function testUrlIndex(): void
     {
-        $this->markTestIncomplete('The test is not ready');
-
-        // $response = $this->get('/urls');
-        // $this->assertSame(200, $response->getStatusCode());
-        // $html = $this->getResponseHtml($response);
-        // $this->assertStringContainsString('Анализатор страниц', $html);
+        $response = $this->get('/urls');
+        $this->assertSame(200, $response->getStatusCode());
+        $html = $this->getResponseHtml($response);
+        $this->assertStringContainsString('example.com', $html);
+        $this->assertStringContainsString('google.com', $html);
     }
 }
