@@ -19,7 +19,7 @@ class UrlsController extends Controller
         $urlRepository = $this->container->get(UrlRepository::class);
 
         $params = [
-            'urls' => $urlRepository->getEntities(),
+            'urls' => $urlRepository->getEntities('created_at DESC'),
             'flash' => $this->flash->getMessages()
         ];
 

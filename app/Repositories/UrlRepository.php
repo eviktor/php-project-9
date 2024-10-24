@@ -6,10 +6,10 @@ use App\Models\Url;
 
 class UrlRepository extends Repository
 {
-    public function getEntities(): array
+    public function getEntities(string $order = ''): array
     {
         $urls = [];
-        $sql = "SELECT * FROM urls";
+        $sql = "SELECT * FROM urls" . ($order !== '' ? " ORDER BY $order" : '');
         $stmt = $this->conn->query($sql);
 
         if ($stmt === false) {
