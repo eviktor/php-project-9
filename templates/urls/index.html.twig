@@ -3,10 +3,29 @@
 {% set page = 'urls' %}
 
 {% block content %}
-<h1>Urls</h1>
-<ul>
-    {% for url in urls %}
-        <li>{{ url.id }} {{ url.name }} {{ url.created_at }}</li>
-    {% endfor %}
-</ul>
+    <div class="container-lg mt-3">
+        <h1>Сайты</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-nowrap" data-test="urls">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя</th>
+                        <th>Последняя проверка</th>
+                        <th>Код ответа</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for url in urls %}
+                        <tr>
+                            <td>{{ url.id }}</td>
+                            <td><a href="/urls/{{ url.id }}">{{ url.name }}</a></td>
+                            <td>{{ url.lastCheckedAt }}</td>
+                            <td>{{ url.lastCode }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}
