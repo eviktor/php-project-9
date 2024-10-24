@@ -31,18 +31,15 @@ class UrlsController extends Controller
         $this->logger->info("Urls.create visited");
 
         $params = (array)$request->getParsedBody();
-
         $urlRepository = $this->container->get(UrlRepository::class);
         $validator = $this->container->get(UrlValidator::class);
 
         $errors = $validator->validate($params);
-
         if (count($errors) > 0) {
             $homeParams = [
                 'url' => $params['url'],
                 'errors' => $errors['url.name']
             ];
-
             return $this->container->get(Twig::class)
                 ->render($response->withStatus(422), 'home.html.twig', $homeParams);
         }
@@ -57,12 +54,7 @@ class UrlsController extends Controller
             $this->flash->addMessage('success', 'Страница успешно добавлена');
         }
 
-        $params = [
-            'id' => $id,
-        ];
-
-        $redirectUrl = $this->getRouteParser($request)
-            ->urlFor('urls.show', $params);
+        $redirectUrl = $this->getRouteParser($request)->urlFor('urls.show', ['id' => $id]);
         return $response
             ->withHeader('Location', $redirectUrl)
             ->withStatus(302);
