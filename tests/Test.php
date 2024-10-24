@@ -2,6 +2,8 @@
 
 namespace App\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+
 class Test extends TestCase
 {
     public static function setUpBeforeClass(): void
@@ -70,17 +72,15 @@ class Test extends TestCase
     {
         return [
             [ 'http://test.com', 302,'' ],
-            [ '-', 302, 'Некорректный URL' ],
+            [ 'test.com', 302,'' ],
+            [ '-', 422, 'Некорректный URL' ],
+            [ '', 422, 'URL не должен быть пустым' ],
         ];
     }
 
-    /**
-     * @dataProvider provideValidationData
-     */
+    #[DataProvider('provideValidationData')]
     public function testUrlValidation(string $url, int $expectedCode, string $expectedText): void
     {
-        $this->markTestIncomplete('The test is not ready');
-
         $params = ['url' => ['name' => $url]];
         $response = $this->post('/urls', $params);
         $this->assertSame($expectedCode, $response->getStatusCode());

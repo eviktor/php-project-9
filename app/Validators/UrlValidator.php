@@ -4,6 +4,7 @@ namespace App\Validators;
 
 use App\Helpers\UrlNameNormalizer;
 use App\Repositories\UrlRepository;
+use GuzzleHttp\Psr7\Exception\MalformedUriException;
 use Valitron\Validator;
 
 class UrlValidator
@@ -12,23 +13,28 @@ class UrlValidator
     {
     }
 
-    public function validate(array $urlData): array
+    public function validateDuplicate(array $urlData): array
     {
         $urlData['url']['name'] = UrlNameNormalizer::normalize($urlData['url']['name']);
 
+        $url = $this->urlRepository->findByName($urlData['url']['name']);
+        return $url === null ? [] : ['url.name' => 'Url with this name already exists.'];
+    }
+
+    public function validate(array $urlData): array
+    {
+        $urlName = $urlData['url']['name'];
+        try {
+            $urlName = UrlNameNormalizer::normalize($urlName);
+        } catch (MalformedUriException $e) {
+            return ['url.name' => 'Некорректный URL']; //$e->getMessage()];
+        }
+        $urlData['url']['name'] = $urlName;
+
         $validator = new Validator($urlData);
-
-        $validator->mapFieldRules('url.name', [
-            'required',
-            ['lengthMax', 255],
-            'url'
-        ]);
-
-        $validator->rule(function ($field, $value, $params, $fields) {
-            $url = $this->urlRepository->findByName($value);
-            return $url === null;
-        }, "url.name")->message("{field} already exists...");
-
+        $validator->rule('required', 'url.name')->message('URL не должен быть пустым');
+        $validator->rule('lengthMax', 'url.name', 255)->message('Некорректный URL');
+        $validator->rule('url', 'url.name')->message('Некорректный URL');
         $validator->validate();
 
         return (array)$validator->errors();

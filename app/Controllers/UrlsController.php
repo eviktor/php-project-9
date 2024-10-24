@@ -33,20 +33,33 @@ class UrlsController extends Controller
 
         $urlRepository = $this->container->get(UrlRepository::class);
         $validator = $this->container->get(UrlValidator::class);
+
         $errors = $validator->validate($params);
 
-        if (count($errors) === 0) {
-            $url = Url::fromArray($params['url']);
-            $urlRepository->save($url);
+        if (count($errors) > 0) {
+            $homeParams = [
+                'url' => $params['url'],
+                'errors' => $errors['url.name']
+            ];
 
-            $this->flash->addMessage('success', 'Страница успешно добавлена');
+            return $this->container->get(Twig::class)
+                ->render($response->withStatus(422), 'home.html.twig', $homeParams);
+        }
+
+        $dupErros = $validator->validateDuplicate($params);
+
+        if (count($dupErros) > 0) {
+            $this->flash->addMessage('warning', 'Страница уже существует');
             $redirectUrl = $this->getRouteParser($request)->urlFor('urls.index');
             return $response
                 ->withHeader('Location', $redirectUrl)
                 ->withStatus(302);
         }
 
-        $this->flash->addMessage('warning', 'Страница уже существует');
+        $url = Url::fromArray($params['url']);
+        $urlRepository->save($url);
+
+        $this->flash->addMessage('success', 'Страница успешно добавлена');
         $redirectUrl = $this->getRouteParser($request)->urlFor('urls.index');
         return $response
             ->withHeader('Location', $redirectUrl)
