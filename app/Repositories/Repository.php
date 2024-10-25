@@ -19,7 +19,6 @@ abstract class Repository
 
     public function getEntities(string $order = ''): array
     {
-        $records = [];
         $sql = "SELECT * FROM $this->tableName" . ($order !== '' ? " ORDER BY $order" : '');
         $stmt = $this->conn->query($sql);
 
@@ -27,12 +26,12 @@ abstract class Repository
             throw new \Exception('Query failed: ' . implode(', ', $this->conn->errorInfo()));
         }
 
+        $records = [];
         while ($row = $stmt->fetch()) {
             $record = $this->makeModelFromArray($row);
             $record->setId($row['id']);
             $records[] = $record;
         }
-
         return $records;
     }
 

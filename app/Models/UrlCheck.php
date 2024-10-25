@@ -6,7 +6,7 @@ use Carbon\Carbon;
 
 class UrlCheck extends Model
 {
-    private ?int $url_id = null;
+    private int $url_id;
     private ?int $status_code = null;
     private ?string $h1 = null;
     private ?string $title = null;
@@ -16,10 +16,18 @@ class UrlCheck extends Model
     {
         $check = new UrlCheck();
         $check->setUrlId($checkData['url_id']);
-        $check->setStatusCode($checkData['status_code']);
-        $check->setH1($checkData['h1']);
-        $check->setTitle($checkData['title']);
-        $check->setDescription($checkData['description']);
+        if (array_key_exists('status_code', $checkData)) {
+            $check->setStatusCode($checkData['status_code']);
+        }
+        if (array_key_exists('h1', $checkData)) {
+            $check->setH1($checkData['h1']);
+        }
+        if (array_key_exists('title', $checkData)) {
+            $check->setTitle($checkData['title']);
+        }
+        if (array_key_exists('description', $checkData)) {
+            $check->setDescription($checkData['description']);
+        }
         if (array_key_exists('created_at', $checkData)) {
             $check->setCreatedAt(Carbon::parse($checkData['created_at']));
         }
@@ -27,7 +35,7 @@ class UrlCheck extends Model
         return $check;
     }
 
-    public function getUrlId(): ?int
+    public function getUrlId(): int
     {
         return $this->url_id;
     }
@@ -57,22 +65,22 @@ class UrlCheck extends Model
         $this->url_id = $urlId;
     }
 
-    public function setStatusCode(int $statusCode): void
+    public function setStatusCode(?int $statusCode): void
     {
         $this->status_code = $statusCode;
     }
 
-    public function setH1(string $h1): void
+    public function setH1(?string $h1): void
     {
         $this->h1 = $h1;
     }
 
-    public function setTitle(string $title): void
+    public function setTitle(?string $title): void
     {
         $this->title = $title;
     }
 
-    public function setDescription(string $desciption): void
+    public function setDescription(?string $desciption): void
     {
         $this->desciption = $desciption;
     }

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Url;
+use App\Repositories\UrlCheckRepository;
 use App\Repositories\UrlRepository;
 use App\Validators\UrlValidator;
 use Psr\Http\Message\ResponseInterface;
@@ -66,6 +67,7 @@ class UrlController extends Controller
         $this->logger->info("Urls.show visited");
 
         $urlRepository = $this->container->get(UrlRepository::class);
+        $checkRepository = $this->container->get(UrlCheckRepository::class);
         $url = $urlRepository->find((int)$args['id']);
         if ($url === null) {
             return $response
@@ -76,6 +78,7 @@ class UrlController extends Controller
 
         $params = [
             'url' => $url,
+            'checks' => $checkRepository->findByUrlId($url->getId()),
             'flash' => $this->flash->getMessages()
         ];
         return $this->container->get(Twig::class)->render($response, 'urls/show.html.twig', $params);

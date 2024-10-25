@@ -11,10 +11,13 @@ class Test extends TestCase
         $app = self::getAppInstance();
         $pdo = $app->getContainer()?->get(\PDO::class);
         $initSql = <<<SQL
-            INSERT INTO urls('name') VALUES
+            INSERT INTO urls(name) VALUES
                 ('http://example.com'),
-                ('https://google.com')
+                ('https://google.com'),
+                ('http://some-not-existsing-domain.com')
             ;
+            INSERT INTO url_checks(url_id, status_code, h1, title, description) VALUES
+                (1, 200, 'Example h1', 'Example title', 'Example description');
         SQL;
         $pdo->exec($initSql);
     }
@@ -104,5 +107,39 @@ class Test extends TestCase
         $html = $this->getResponseHtml($response);
         $this->assertStringContainsString('example.com', $html);
         $this->assertStringContainsString('google.com', $html);
+    }
+
+    public function testCheckCreate(): void
+    {
+        $params = ['check' => ['url_id' => 1]];
+        $response = $this->post('/urls/1/checks', $params);
+        $this->assertSame(302, $response->getStatusCode());
+
+        $response = $this->get('/urls/1');
+        $this->assertSame(200, $response->getStatusCode());
+        $html = $this->getResponseHtml($response);
+        $this->assertStringContainsString('http://example.com', $html);
+        // $this->assertStringContainsString('Страница успешно проверена', $html);
+
+        $params = ['check' => ['url_id' => 3]];
+        $response = $this->post('/urls/3/checks', $params);
+        $this->assertSame(302, $response->getStatusCode());
+
+        $response = $this->get('/urls/3');
+        $this->assertSame(200, $response->getStatusCode());
+        $html = $this->getResponseHtml($response);
+        $this->assertStringContainsString('http://some-not-existsing-domain.com', $html);
+        // $this->assertStringContainsString('Произошла ошибка при проверке, не удалось подключиться', $html);
+    }
+
+    public function testCheckIndex(): void
+    {
+        $response = $this->get('/urls/1');
+        $this->assertSame(200, $response->getStatusCode());
+        $html = $this->getResponseHtml($response);
+        $this->assertStringContainsString('example.com', $html);
+        $this->assertStringContainsString('Example h1', $html);
+        $this->assertStringContainsString('Example title', $html);
+        $this->assertStringContainsString('Example description', $html);
     }
 }
