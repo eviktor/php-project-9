@@ -20,15 +20,16 @@ class UrlRepository extends Repository
             SELECT
                 urls.*,
                 url_checks.created_at AS last_checked_at,
-                url_checks.status_code as last_status_code
+                url_checks.status_code AS last_status_code
             FROM urls
             LEFT JOIN (
-                SELECT id, url_id
+                SELECT url_id, MAX(created_at) last_checked_at
                 FROM url_checks
                 GROUP BY url_id
-                HAVING created_at = MAX(created_at)
             ) AS last_check ON urls.id = last_check.url_id
-            LEFT JOIN url_checks ON last_check.id = url_checks.id;
+            LEFT JOIN url_checks
+                ON last_check.url_id = url_checks.url_id
+                AND last_check.last_checked_at = url_checks.created_at
         SQL;
         $sql = $sql . ($order !== '' ? " ORDER BY $order" : '');
         $stmt = $this->conn->query($sql);
