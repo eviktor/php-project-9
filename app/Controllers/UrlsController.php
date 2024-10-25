@@ -55,9 +55,7 @@ class UrlsController extends Controller
         }
 
         $redirectUrl = $this->getRouteParser($request)->urlFor('urls.show', ['id' => $id]);
-        return $response
-            ->withHeader('Location', $redirectUrl)
-            ->withStatus(302);
+        return $response->withHeader('Location', $redirectUrl)->withStatus(302);
     }
 
     public function show(
