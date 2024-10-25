@@ -10,7 +10,7 @@ use Slim\Http\Interfaces\ResponseInterface as SlimResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Views\Twig;
 
-class UrlsController extends Controller
+class UrlController extends Controller
 {
     public function index(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
