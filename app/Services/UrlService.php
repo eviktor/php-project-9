@@ -10,15 +10,15 @@ use App\Repositories\UrlCheckRepository;
 use App\Repositories\UrlRepository;
 use App\Validators\UrlValidator;
 use GuzzleHttp\Psr7\Exception\MalformedUriException;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 class UrlService
 {
     public function __construct(
+        private ContainerInterface $container,
         private UrlRepository $urlRepository,
-        private UrlRequestChecker $checker,
         private UrlCheckRepository $checkRepository,
-        private UrlValidator $urlValidator,
         private LoggerInterface $logger
     ) {
     }
@@ -60,7 +60,7 @@ class UrlService
         if ($normUrl === false) {
             return ['url' => 'Некорректный URL'];
         }
-        return $this->urlValidator->validate($normUrl);
+        return $this->container->get(UrlValidator::class)->validate($normUrl);
     }
 
     public function normalizeUrl(string $url): string | false
@@ -75,7 +75,7 @@ class UrlService
 
     public function checkUrl(Url $urlRec): ?UrlCheck
     {
-        $result = $this->checker->checkUrl($urlRec->getName());
+        $result = $this->container->get(UrlRequestChecker::class)->checkUrl($urlRec->getName());
         if ($result === false) {
             return null;
         }

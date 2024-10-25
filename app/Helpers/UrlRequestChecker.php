@@ -12,6 +12,19 @@ class UrlRequestChecker
     {
     }
 
+    private function getDescription(DOMDocument $doc): string
+    {
+        $metaItems = $doc->getElementsByTagName('meta');
+        $description = '';
+        foreach ($metaItems as $metaItem) {
+            if ($metaItem->getAttribute('name') === 'description') {
+                $description = $metaItem->getAttribute('content');
+                break;
+            }
+        }
+        return $description;
+    }
+
     public function checkUrl(string $url): array|false
     {
         try {
@@ -23,14 +36,7 @@ class UrlRequestChecker
             $doc->loadHTML($html);
             $h1 = $doc->getElementsByTagName('h1')->item(0)?->textContent;
             $title = $doc->getElementsByTagName('title')->item(0)?->textContent;
-            $metaItems = $doc->getElementsByTagName('meta');
-            $description = '';
-            foreach ($metaItems as $metaItem) {
-                if ($metaItem->getAttribute('name') === 'description') {
-                    $description = $metaItem->getAttribute('content');
-                    break;
-                }
-            }
+            $description = $this->getDescription($doc);
 
             return [
                 'status_code' => $statusCode,
