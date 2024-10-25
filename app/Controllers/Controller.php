@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Services\UrlService;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -14,7 +15,8 @@ abstract class Controller
     public function __construct(
         protected ContainerInterface $container,
         protected LoggerInterface $logger,
-        protected Messages $flash
+        protected Messages $flash,
+        protected UrlService $urlService
     ) {
     }
 

@@ -2,13 +2,9 @@
 
 namespace App\Controllers;
 
-use App\Models\Url;
-use App\Repositories\UrlCheckRepository;
-use App\Repositories\UrlRepository;
-use App\Validators\UrlValidator;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Interfaces\ResponseInterface as SlimResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Interfaces\ResponseInterface as SlimResponseInterface;
 use Slim\Views\Twig;
 
 class UrlController extends Controller
@@ -17,10 +13,8 @@ class UrlController extends Controller
     {
         $this->logger->info("Urls.index visited");
 
-        $urlRepository = $this->container->get(UrlRepository::class);
-
         $params = [
-            'urls' => $urlRepository->getEntities('created_at DESC'),
+            'urls' => $this->urlService->getAllUrlRecords(),
             'flash' => $this->flash->getMessages()
         ];
 
@@ -29,33 +23,31 @@ class UrlController extends Controller
 
     public function create(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $this->logger->info("Urls.create visited");
-
         $params = (array)$request->getParsedBody();
-        $urlRepository = $this->container->get(UrlRepository::class);
-        $validator = $this->container->get(UrlValidator::class);
+        $url = $params['url']['name'];
 
-        $errors = $validator->validate($params);
+        $this->logger->info("Urls.create visited (url = $url)");
+
+        $errors = $this->urlService->validateUrl($url);
         if (count($errors) > 0) {
             $homeParams = [
                 'url' => $params['url'],
-                'errors' => $errors['url.name']
+                'errors' => $errors['url']
             ];
             return $this->container->get(Twig::class)
                 ->render($response->withStatus(422), 'home.html.twig', $homeParams);
         }
 
-        $id = $urlRepository->findByName($params['url']['name'])?->getId();
-        if ($id !== null) {
+        $urlRec = $this->urlService->findUrlRecord($url);
+        if ($urlRec !== null) {
             $this->flash->addMessage('warning', 'Страница уже существует');
         } else {
-            $url = Url::fromArray($params['url']);
-            $urlRepository->save($url);
-            $id = $url->getId();
+            $urlRec = $this->urlService->saveUrl($url);
             $this->flash->addMessage('success', 'Страница успешно добавлена');
         }
 
-        $redirectUrl = $this->getRouteParser($request)->urlFor('urls.show', ['id' => $id]);
+        $redirectUrl = $this->getRouteParser($request)
+            ->urlFor('urls.show', ['id' => (string)$urlRec->getId()]);
         return $response->withHeader('Location', $redirectUrl)->withStatus(302);
     }
 
@@ -66,10 +58,8 @@ class UrlController extends Controller
     ): ResponseInterface {
         $this->logger->info("Urls.show visited");
 
-        $urlRepository = $this->container->get(UrlRepository::class);
-        $checkRepository = $this->container->get(UrlCheckRepository::class);
-        $url = $urlRepository->find((int)$args['id']);
-        if ($url === null) {
+        $urlRec = $this->urlService->getUrlRecord((int)$args['id']);
+        if ($urlRec === null) {
             return $response
                 ->withStatus(404)
                 ->withHeader('Content-Type', 'text/html')
@@ -77,8 +67,8 @@ class UrlController extends Controller
         }
 
         $params = [
-            'url' => $url,
-            'checks' => $checkRepository->findByUrlId($url->getId()),
+            'url' => $urlRec,
+            'checks' => $this->urlService->getUrlChecks($urlRec->getId()),
             'flash' => $this->flash->getMessages()
         ];
         return $this->container->get(Twig::class)->render($response, 'urls/show.html.twig', $params);
