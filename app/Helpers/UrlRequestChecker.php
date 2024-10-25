@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use DOMDocument;
+use DiDom\Document;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 
@@ -12,19 +12,6 @@ class UrlRequestChecker
     {
     }
 
-    private function getDescription(DOMDocument $doc): string
-    {
-        $metaItems = $doc->getElementsByTagName('meta');
-        $description = '';
-        foreach ($metaItems as $metaItem) {
-            if ($metaItem->getAttribute('name') === 'description') {
-                $description = $metaItem->getAttribute('content');
-                break;
-            }
-        }
-        return $description;
-    }
-
     public function checkUrl(string $url): array|false
     {
         try {
@@ -32,11 +19,13 @@ class UrlRequestChecker
             $response = $client->request('GET', $url);
             $statusCode = $response->getStatusCode();
             $html = $response->getBody()->getContents();
-            $doc = new DOMDocument();
-            $doc->loadHTML($html);
-            $h1 = $doc->getElementsByTagName('h1')->item(0)?->textContent;
-            $title = $doc->getElementsByTagName('title')->item(0)?->textContent;
-            $description = $this->getDescription($doc);
+            $doc = new Document($html);
+            // @phpstan-ignore-next-line
+            $h1 = $doc->first('h1')?->text();
+            // @phpstan-ignore-next-line
+            $title = $doc->first('title')?->text();
+            // @phpstan-ignore-next-line
+            $description = $doc->first('meta[name=description]')?->attr('content');
 
             return [
                 'status_code' => $statusCode,
