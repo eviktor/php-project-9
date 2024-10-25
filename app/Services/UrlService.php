@@ -3,11 +3,11 @@
 namespace App\Services;
 
 use App\Helpers\UrlNameNormalizer;
+use App\Helpers\UrlRequestChecker;
+use App\Models\Url;
 use App\Models\UrlCheck;
 use App\Repositories\UrlCheckRepository;
 use App\Repositories\UrlRepository;
-use App\Models\Model;
-use App\Models\Url;
 use App\Validators\UrlValidator;
 use GuzzleHttp\Psr7\Exception\MalformedUriException;
 use Psr\Log\LoggerInterface;
@@ -16,6 +16,7 @@ class UrlService
 {
     public function __construct(
         private UrlRepository $urlRepository,
+        private UrlRequestChecker $checker,
         private UrlCheckRepository $checkRepository,
         private UrlValidator $urlValidator,
         private LoggerInterface $logger
@@ -27,7 +28,7 @@ class UrlService
         return $this->urlRepository->findByName($url);
     }
 
-    public function getUrlRecord(int $id): ?Model
+    public function getUrlRecord(int $id): ?Url
     {
         return $this->urlRepository->find($id);
     }
@@ -53,14 +54,6 @@ class UrlService
         return $url;
     }
 
-    public function saveCheck(int $urlId): UrlCheck
-    {
-        $this->logger->info("UrlService.saveCheck (urlId = $urlId)");
-        $check = UrlCheck::fromArray(['url_id' => $urlId]);
-        $this->checkRepository->save($check);
-        return $check;
-    }
-
     public function validateUrl(string $url): array
     {
         $normUrl = $this->normalizeUrl($url);
@@ -78,5 +71,17 @@ class UrlService
             $this->logger->info('UrlService.normalizeUrl: ' . $e->getMessage());
             return false;
         }
+    }
+
+    public function checkUrl(Url $urlRec): ?UrlCheck
+    {
+        $result = $this->checker->checkUrl($urlRec->getName());
+        if ($result === false) {
+            return null;
+        }
+        $result['url_id'] = $urlRec->getId();
+        $check = UrlCheck::fromArray($result);
+        $this->checkRepository->save($check);
+        return $check;
     }
 }

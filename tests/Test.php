@@ -119,7 +119,7 @@ class Test extends TestCase
         $this->assertSame(200, $response->getStatusCode());
         $html = $this->getResponseHtml($response);
         $this->assertStringContainsString('http://example.com', $html);
-        // $this->assertStringContainsString('Страница успешно проверена', $html);
+        $this->assertStringContainsString('Страница успешно проверена', $html);
 
         $params = ['check' => ['url_id' => 3]];
         $response = $this->post('/urls/3/checks', $params);
@@ -129,7 +129,7 @@ class Test extends TestCase
         $this->assertSame(200, $response->getStatusCode());
         $html = $this->getResponseHtml($response);
         $this->assertStringContainsString('http://some-not-existsing-domain.com', $html);
-        // $this->assertStringContainsString('Произошла ошибка при проверке, не удалось подключиться', $html);
+        $this->assertStringContainsString('Произошла ошибка при проверке, не удалось подключиться', $html);
     }
 
     public function testCheckIndex(): void

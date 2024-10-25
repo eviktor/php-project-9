@@ -8,7 +8,7 @@ abstract class Repository
 {
     protected string $tableName = '';
 
-    abstract protected function makeModelFromArray(array $modelData): Model;
+    abstract protected function makeModelFromArray(array $modelData): mixed;
 
     abstract protected function create(mixed $model): void;
     abstract protected function update(mixed $model): void;
@@ -40,9 +40,9 @@ abstract class Repository
         return $records;
     }
 
-    public function find(int $id): ?Model
+    public function find(int $id): mixed
     {
-        $sql = "SELECT * FROM urls WHERE id = ?";
+        $sql = "SELECT * FROM $this->tableName WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$id]);
         if ($row = $stmt->fetch()) {

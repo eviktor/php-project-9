@@ -2,15 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Models\Model;
-use App\Models\Url;
 use App\Models\UrlCheck;
 
 class UrlCheckRepository extends Repository
 {
     protected string $tableName = 'url_checks';
 
-    protected function makeModelFromArray(array $modelData): Model
+    protected function makeModelFromArray(array $modelData): UrlCheck
     {
         return UrlCheck::fromArray($modelData);
     }

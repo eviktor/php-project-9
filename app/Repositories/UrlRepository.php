@@ -2,14 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Models\Model;
 use App\Models\Url;
 
 class UrlRepository extends Repository
 {
     protected string $tableName = 'urls';
 
-    protected function makeModelFromArray(array $modelData): Model
+    protected function makeModelFromArray(array $modelData): Url
     {
         return Url::fromArray($modelData);
     }

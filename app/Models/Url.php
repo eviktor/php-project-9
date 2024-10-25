@@ -7,7 +7,7 @@ use Carbon\Carbon;
 
 class Url extends Model
 {
-    private ?string $name = null;
+    private string $name = '';
     private ?Carbon $lastCheckedAt = null;
     private ?int $lastStatusCode = null;
 
@@ -28,7 +28,7 @@ class Url extends Model
         return $url;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
