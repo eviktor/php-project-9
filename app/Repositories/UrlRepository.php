@@ -14,6 +14,27 @@ class UrlRepository extends Repository
         return Url::fromArray($modelData);
     }
 
+    public function getEntities(string $order = ''): array
+    {
+        $sql = <<<SQL
+            SELECT
+                urls.*,
+                url_checks.created_at AS last_checked_at,
+                url_checks.status_code as last_status_code
+            FROM urls
+            LEFT JOIN (
+                SELECT id, url_id
+                FROM url_checks
+                GROUP BY url_id
+                HAVING created_at = MAX(created_at)
+            ) AS last_check ON urls.id = last_check.url_id
+            LEFT JOIN url_checks ON last_check.id = url_checks.id;
+        SQL;
+        $sql = $sql . ($order !== '' ? " ORDER BY $order" : '');
+        $stmt = $this->conn->query($sql);
+        return $stmt === false ? [] : $this->fetchRecords($stmt);
+    }
+
     protected function update(mixed $model): void
     {
         $sql = "UPDATE urls SET name = :make, created_at = :created_at WHERE id = :id";

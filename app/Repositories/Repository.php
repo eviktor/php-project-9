@@ -26,6 +26,11 @@ abstract class Repository
             throw new \Exception('Query failed: ' . implode(', ', $this->conn->errorInfo()));
         }
 
+        return $this->fetchRecords($stmt);
+    }
+
+    protected function fetchRecords(\PDOStatement $stmt): array
+    {
         $records = [];
         while ($row = $stmt->fetch()) {
             $record = $this->makeModelFromArray($row);

@@ -26,9 +26,9 @@ abstract class Model
         $this->id = $id;
     }
 
-    public function setCreatedAt(?Carbon $createdAt): void
+    public function setCreatedAt(?string $createdAt): void
     {
-        $this->createdAt = $createdAt;
+        $this->createdAt = empty($createdAt) ? null : Carbon::parse($createdAt);
     }
 
     public function exists(): bool

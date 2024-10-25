@@ -29,7 +29,7 @@ class UrlCheck extends Model
             $check->setDescription($checkData['description']);
         }
         if (array_key_exists('created_at', $checkData)) {
-            $check->setCreatedAt(Carbon::parse($checkData['created_at']));
+            $check->setCreatedAt($checkData['created_at']);
         }
 
         return $check;
