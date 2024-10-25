@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS url_checks (
     status_code INTEGER,
     h1 TEXT,
     title TEXT,
-    desciption TEXT,
+    description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
