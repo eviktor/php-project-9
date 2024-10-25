@@ -15,7 +15,7 @@ class UrlCheckController extends Controller
     ): ResponseInterface {
         $this->logger->info("UrlChecks.create visited");
 
-        $urlId = $args['url_id'];
+        $urlId = $args['id'];
         $urlRec = $this->urlService->getUrlRecord((int)$urlId);
         if ($urlRec === null) {
             return $response
