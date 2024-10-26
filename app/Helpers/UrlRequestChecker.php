@@ -16,7 +16,7 @@ class UrlRequestChecker
     {
         try {
             $client = new Client();
-            $response = $client->request('GET', $url);
+            $response = $client->request('GET', $url, ['timeout' => 5]);
             $statusCode = $response->getStatusCode();
             $html = $response->getBody()->getContents();
             $doc = new Document($html);
