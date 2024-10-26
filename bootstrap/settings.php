@@ -15,7 +15,7 @@ return function (): SettingsInterface {
         'logErrors' => false,
         'logErrorDetails' => false,
 
-        'cache' => $isDebug ? false : __DIR__ . '/../.cache',
+        'cache' => false, //$isDebug ? false : __DIR__ . '/../.cache',
 
         'databaseDsn' => DsnParser::parse($_ENV['DATABASE_URL']),
 

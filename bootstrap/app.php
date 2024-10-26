@@ -12,7 +12,7 @@ require __DIR__ . '/../bootstrap/middleware.php';
 
 require __DIR__ . '/../bootstrap/routes.php';
 
-if ($_ENV['APP_ENV'] !== 'testing') {
+if (!isset($_ENV['APP_ENV']) || $_ENV['APP_ENV'] !== 'testing') {
     $app->run();
 }
 

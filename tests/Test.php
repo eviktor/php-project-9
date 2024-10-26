@@ -10,12 +10,16 @@ class Test extends TestCase
     {
         $app = self::getAppInstance();
         $pdo = $app->getContainer()?->get(\PDO::class);
+
+        $initFilePath = __DIR__ . "/../database.sqlite.sql";
+        $initSql = file_get_contents($initFilePath);
+        $pdo->exec($initSql);
+
         $initSql = <<<SQL
-            INSERT INTO urls(name) VALUES
-                ('http://example.com'),
-                ('https://google.com'),
-                ('http://some-not-existsing-domain.com')
-            ;
+            INSERT INTO urls(name) VALUES ('http://example.com');
+            INSERT INTO urls(name) VALUES ('https://google.com');
+            INSERT INTO urls(name) VALUES ('http://some-not-existsing-domain.com');
+
             INSERT INTO url_checks(url_id, status_code, h1, title, description) VALUES
                 (1, 200, 'Example h1', 'Example title', 'Example description');
         SQL;

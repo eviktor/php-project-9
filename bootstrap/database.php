@@ -9,7 +9,7 @@ return function (ContainerInterface $container): \PDO {
 
     $driver = '';
     $pdoDsn = '';
-    $initFileName = 'database.sql';
+    // $initFileName = 'database.sql';
     switch ($dsn->getScheme()) {
         case 'pgsql':
         case 'postgresql':
@@ -27,7 +27,7 @@ return function (ContainerInterface $container): \PDO {
         case 'sqlite':
             $driver = "sqlite";
             $pdoDsn = "$driver:" . ltrim(urldecode($dsn->getPath()), '/');
-            $initFileName = 'database.sqlite.sql';
+            // $initFileName = 'database.sqlite.sql';
             break;
         default:
             throw new \Exception('Unsupported database scheme');
@@ -35,11 +35,11 @@ return function (ContainerInterface $container): \PDO {
 
     $pdo = new \PDO($pdoDsn);
 
-    if ($settings->get('env') === 'local' || $settings->get('env') === 'testing') {
-        $initFilePath = __DIR__ . "/../$initFileName";
-        $initSql = file_get_contents($initFilePath);
-        $pdo->exec($initSql);
-    }
+    // if ($settings->get('env') === 'local' || $settings->get('env') === 'testing') {
+    //     $initFilePath = __DIR__ . "/../$initFileName";
+    //     $initSql = file_get_contents($initFilePath);
+    //     $pdo->exec($initSql);
+    // }
 
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
