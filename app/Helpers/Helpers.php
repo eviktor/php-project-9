@@ -23,32 +23,26 @@ if (!function_exists('env')) {
 
     function parseEnvValue(string $value): mixed
     {
-        $parsedValue = $value;
+        $specialValues = [
+            'true' => true,
+            '(true)' => true,
+            'false' => false,
+            '(false)' => false,
+            'empty' => '',
+            '(empty)' => '',
+            'null' => null,
+            '(null)' => null,
+        ];
 
-        switch (strtolower($value)) {
-            case 'true':
-            case '(true)':
-                $parsedValue = true;
-                break;
-            case 'false':
-            case '(false)':
-                $parsedValue = false;
-                break;
-            case 'empty':
-            case '(empty)':
-                $parsedValue = '';
-                break;
-            case 'null':
-            case '(null)':
-                $parsedValue = null;
-                break;
-            default:
-                if (strlen($value) > 1 && $value[0] === '"' && $value[-1] === '"') {
-                    $parsedValue = substr($value, 1, -1);
-                }
-                break;
+        $lowerValue = strtolower($value);
+        if (array_key_exists($lowerValue, $specialValues)) {
+            return $specialValues[$lowerValue];
         }
 
-        return $parsedValue;
+        if (strlen($value) > 1 && $value[0] === '"' && $value[-1] === '"') {
+            return substr($value, 1, -1);
+        }
+
+        return $value;
     }
 }
