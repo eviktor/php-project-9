@@ -18,8 +18,6 @@ use Slim\Psr7\Uri;
 // Based on https://github.com/slimphp/Slim-Skeleton/blob/main/tests/TestCase.php
 class TestCase extends PHPUnit_TestCase
 {
-    use ProphecyTrait;
-
     protected static ?App $app = null;
 
     /**

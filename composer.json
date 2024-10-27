@@ -23,15 +23,13 @@
         "squizlabs/php_codesniffer": "3.*",
         "phpunit/phpunit": "^11",
         "phpstan/phpstan": "^1.11",
-        "symfony/var-dumper": "^7.1",
-        "phpstan/extension-installer": "^1.4",
-        "phpspec/prophecy-phpunit": "^2.2",
-        "jangregor/phpstan-prophecy": "^1.0"
+        "symfony/var-dumper": "^7.1"
     },
     "bin": [
     ],
     "autoload": {
         "files": [
+            "app/Helpers/Helpers.php"
         ],
         "psr-4": {
             "App\\Tests\\": "tests",
