@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS urls (
 
 CREATE TABLE IF NOT EXISTS url_checks (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    url_id INTEGER NOT NULL,
+    url_id INTEGER NOT NULL REFERENCES urs(id),
     status_code INTEGER,
     h1 TEXT,
     title TEXT,
