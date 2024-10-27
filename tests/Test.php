@@ -2,14 +2,80 @@
 
 namespace App\Tests;
 
+use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\App;
+use Slim\Psr7\Factory\StreamFactory;
+use Slim\Psr7\Headers;
+use Slim\Psr7\Request as SlimRequest;
+use Slim\Psr7\Uri;
 
 class Test extends TestCase
 {
+    /**
+     * @var App<ContainerInterface>
+     */
+    protected static App $app;
+
+    /**
+     * @param string $method
+     * @param string $path
+     * @param array  $headers
+     * @param array  $cookies
+     * @param array  $serverParams
+     * @return Request
+     */
+    protected function createRequest(
+        string $method,
+        string $path,
+        array $headers = ['HTTP_ACCEPT' => 'application/json'],
+        array $cookies = [],
+        array $serverParams = []
+    ): Request {
+        $uri = new Uri('', '', 80, $path);
+        $handle = fopen('php://temp', 'w+');
+        if ($handle === false) {
+            throw new Exception('Unable to open temporary file');
+        }
+        $stream = (new StreamFactory())->createStreamFromResource($handle);
+
+        $h = new Headers();
+        foreach ($headers as $name => $value) {
+            $h->addHeader($name, $value);
+        }
+
+        return new SlimRequest($method, $uri, $h, $cookies, $serverParams, $stream);
+    }
+
+    protected function get(string $path): ResponseInterface
+    {
+        $req = $this->createRequest('GET', $path);
+        return self::$app->handle($req);
+    }
+
+    protected function getResponseHtml(ResponseInterface $response): string
+    {
+        $body = $response->getBody();
+        $body->rewind();
+        return $body->getContents();
+    }
+
+    protected function post(string $path, array $params): ResponseInterface
+    {
+        $req = $this
+            ->createRequest('POST', $path)
+            ->withParsedBody($params);
+        return self::$app->handle($req);
+    }
+
     public static function setUpBeforeClass(): void
     {
-        $app = self::getAppInstance();
-        $pdo = $app->getContainer()->get(\PDO::class);
+        self::$app = require __DIR__ . '/../bootstrap/app.php';
+        $pdo = self::$app->getContainer()->get(\PDO::class);
 
         $initFilePath = __DIR__ . "/../database.sqlite.sql";
         $initSql = file_get_contents($initFilePath);
@@ -28,15 +94,13 @@ class Test extends TestCase
 
     protected function setUp(): void
     {
-        $app = self::getAppInstance();
-        $pdo = $app->getContainer()->get(\PDO::class);
+        $pdo = self::$app->getContainer()->get(\PDO::class);
         $pdo->beginTransaction();
     }
 
     protected function tearDown(): void
     {
-        $app = self::getAppInstance();
-        $pdo = $app->getContainer()->get(\PDO::class);
+        $pdo = self::$app->getContainer()->get(\PDO::class);
         $pdo->rollBack();
     }
 
