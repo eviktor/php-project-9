@@ -15,11 +15,14 @@ if (!function_exists('env')) {
     function env(string $key, $default = null)
     {
         $value = getenv($key);
-
         if ($value === false) {
             return $default;
         }
+        return parseEnvValue($value);
+    }
 
+    function parseEnvValue(string $value): mixed
+    {
         switch (strtolower($value)) {
             case 'true':
             case '(true)':
@@ -35,9 +38,7 @@ if (!function_exists('env')) {
                 return null;
         }
 
-        $strLen = strlen($value);
-
-        if ($strLen > 1 && $value[0] === '"' && $value[$strLen - 1] === '"') {
+        if (strlen($value) > 1 && $value[0] === '"' && $value[-1] === '"') {
             return substr($value, 1, -1);
         }
 
