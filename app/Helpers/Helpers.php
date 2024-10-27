@@ -16,9 +16,9 @@ if (!function_exists('env')) {
     {
         $value = getenv($key);
         if ($value === false) {
-            return $default;
+            $value = $_ENV[$key] ?? $_SERVER[$key] ?? null;
         }
-        return parseEnvValue($value);
+        return is_null($value) ? $default : parseEnvValue($value);
     }
 
     function parseEnvValue(string $value): mixed
@@ -44,5 +44,22 @@ if (!function_exists('env')) {
         }
 
         return $value;
+    }
+}
+
+if (!function_exists('base_path')) {
+    /**
+     * Get the path to the base folder
+     *
+     * @param string $path
+     * @return string
+     */
+    function base_path(string $path = ''): string
+    {
+        if ($path !== '' && $path[0] != '/') {
+            $path = '/' . $path;
+        }
+
+        return realpath(__DIR__ . '/../..') . $path;
     }
 }
