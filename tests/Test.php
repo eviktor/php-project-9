@@ -9,7 +9,7 @@ class Test extends TestCase
     public static function setUpBeforeClass(): void
     {
         $app = self::getAppInstance();
-        $pdo = $app->getContainer()?->get(\PDO::class);
+        $pdo = $app->getContainer()->get(\PDO::class);
 
         $initFilePath = __DIR__ . "/../database.sqlite.sql";
         $initSql = file_get_contents($initFilePath);
@@ -29,14 +29,14 @@ class Test extends TestCase
     protected function setUp(): void
     {
         $app = self::getAppInstance();
-        $pdo = $app->getContainer()?->get(\PDO::class);
+        $pdo = $app->getContainer()->get(\PDO::class);
         $pdo->beginTransaction();
     }
 
     protected function tearDown(): void
     {
         $app = self::getAppInstance();
-        $pdo = $app->getContainer()?->get(\PDO::class);
+        $pdo = $app->getContainer()->get(\PDO::class);
         $pdo->rollBack();
     }
 

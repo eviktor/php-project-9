@@ -6,7 +6,7 @@ namespace App\Tests;
 
 use Exception;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -18,10 +18,13 @@ use Slim\Psr7\Uri;
 // Based on https://github.com/slimphp/Slim-Skeleton/blob/main/tests/TestCase.php
 class TestCase extends PHPUnit_TestCase
 {
+    /**
+     * @var App<ContainerInterface>
+     */
     protected static ?App $app = null;
 
     /**
-     * @return App
+     * @return App<ContainerInterface>
      * @throws Exception
      */
     protected static function getAppInstance(): App

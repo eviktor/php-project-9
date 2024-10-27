@@ -8,9 +8,11 @@ AppFactory::setContainer($container);
 
 $app = AppFactory::create();
 
-require __DIR__ . '/../bootstrap/middleware.php';
+$addMiddleware = require __DIR__ . '/../bootstrap/middleware.php';
+$addMiddleware($app, $container);
 
-require __DIR__ . '/../bootstrap/routes.php';
+$addRoutes = require __DIR__ . '/../bootstrap/routes.php';
+$addRoutes($app);
 
 if (env('APP_ENV') !== 'testing') {
     $app->run();

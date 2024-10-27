@@ -17,7 +17,7 @@ return function (): SettingsInterface {
 
         'cache' => false, //$isDebug ? false : __DIR__ . '/../.cache',
 
-        'databaseDsn' => DsnParser::parse(getenv('DATABASE_URL')),
+        'databaseDsn' => DsnParser::parse(env('DATABASE_URL')),
 
         'logger' => [
             'name' => 'slim-app',
