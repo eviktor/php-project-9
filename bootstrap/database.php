@@ -1,10 +1,8 @@
 <?php
 
 use App\Settings\SettingsInterface;
-use Psr\Container\ContainerInterface;
 
-return function (ContainerInterface $container): \PDO {
-    $settings = $container->get(SettingsInterface::class);
+return function (SettingsInterface $settings): \PDO {
     $dsn = $settings->get('databaseDsn');
 
     $driver = '';
@@ -26,7 +24,9 @@ return function (ContainerInterface $container): \PDO {
             break;
         case 'sqlite':
             $driver = "sqlite";
-            $pdoDsn = "$driver:" . ltrim(urldecode($dsn->getPath()), '/');
+            $path = ltrim(urldecode($dsn->getPath()), '/');
+            $dsnPath = ($path === ':memory:' ? $path : base_path() . '/' . $path);
+            $pdoDsn = "$driver:$dsnPath";
             break;
         default:
             throw new \Exception("Unsupported database scheme $dsnScheme");

@@ -18,7 +18,8 @@ if (file_exists(__DIR__ . '/../.env')) {
 $container = new Container();
 
 $getSettings = require __DIR__ . '/../bootstrap/settings.php';
-$container->set(SettingsInterface::class, $getSettings);
+$settings = $getSettings();
+$container->set(SettingsInterface::class, $settings);
 
 $container->set(LoggerInterface::class, function (SettingsInterface $settings) {
     $loggerSettings = $settings->get('logger');
@@ -49,6 +50,6 @@ $container->set(Messages::class, function () {
 });
 
 $getPDO = require __DIR__ . '/../bootstrap/database.php';
-$container->set(\PDO::class, $getPDO);
+$container->set(\PDO::class, $getPDO($settings));
 
 return $container;
