@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use Exception;
-use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -16,7 +15,7 @@ use Slim\Psr7\Request as SlimRequest;
 use Slim\Psr7\Uri;
 
 // Based on https://github.com/slimphp/Slim-Skeleton/blob/main/tests/TestCase.php
-class TestCase extends PHPUnit_TestCase
+class TestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var App<ContainerInterface>
